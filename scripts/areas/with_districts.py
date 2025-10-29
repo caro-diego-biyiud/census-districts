@@ -1,11 +1,25 @@
 import geopandas as gpd
+import pandas as pd
 import os
 from pathlib import Path
 
 
-def area_with_districts(area_name, area):
+def area_with_districts(csv_path):
     print("=== Spanish Area Processing ===")
+
+    # Read CSV and extract area name
+    csv_path = Path(csv_path)
+    area_name = csv_path.stem
     print(f"Getting {area_name} districts...\n")
+
+    # Read area definition from CSV
+    try:
+        area_df = pd.read_csv(csv_path, delimiter=';', encoding='utf-8')
+        print(f"   ✓ Loaded area definition with {len(area_df)} entries")
+        print(f"   ✓ Fields: {area_df['field'].unique().tolist()}")
+    except Exception as e:
+        print(f"ERROR reading CSV file: {e}")
+        return
 
     script_dir = Path(__file__).parent
     data_path = script_dir / "../../data/processed/distritos_2025.geojson"
@@ -34,19 +48,35 @@ def area_with_districts(area_name, area):
     available_fields = list(gdf.columns)
     print(f"   Available fields: {available_fields}")
 
-    print("\n3. Getting listed Municipalities")
-    filtered_gdf = gdf[gdf["NMUN"].isin(area)]
-    print(f"Matched {len(filtered_gdf)} of {len(gdf)} rows")
+    print("\n3. Filtering by CSV criteria")
 
-    # Check for missing municipalities
-    found_municipalities = set(filtered_gdf["NMUN"].unique())
-    missing_municipalities = set(area) - found_municipalities
-    if missing_municipalities:
-        print(f"\n❌ Missing municipalities not found in data:")
-        for missing in sorted(missing_municipalities):
-            print(f"   ❌ {missing}")
-    else:
-        print(f"\n✓ All {len(area)} municipalities found in data")
+    # Create filter mask based on CSV fields
+    mask = pd.Series([False] * len(gdf), index=gdf.index)
+
+    for field, group in area_df.groupby('field'):
+        if field in gdf.columns:
+            values = group['value'].tolist()
+            field_mask = gdf[field].isin(values)
+            mask |= field_mask
+            print(f"   Filtering by {field}: {len(values)} values, matched {field_mask.sum()} rows")
+        else:
+            print(f"   ⚠️  Field '{field}' not found in data columns: {list(gdf.columns)}")
+
+    filtered_gdf = gdf[mask]
+    print(f"   ✓ Total matched: {len(filtered_gdf)} of {len(gdf)} rows")
+
+    # Check for missing values by field
+    for field, group in area_df.groupby('field'):
+        if field in gdf.columns:
+            values = set(group['value'].tolist())
+            found_values = set(gdf[field].unique())
+            missing_values = values - found_values
+            if missing_values:
+                print(f"   ❌ Missing {field} values not found in data:")
+                for missing in sorted(missing_values):
+                    print(f"      ❌ {missing}")
+            else:
+                print(f"   ✓ All {len(values)} {field} values found in data")
     
     print("\n4. Selecting fields to keep...")
     fields_to_keep = [
@@ -82,7 +112,8 @@ def area_with_districts(area_name, area):
     print("\n=== Processing Summary ===")
     print(f"Input sections: {len(gdf)}")
     print(f"Output districts: {len(filtered_gdf)}")
-    print(f"Municipalities: {len(area)}")
+    print(f"CSV entries: {len(area_df)}")
+    print(f"CSV fields: {area_df['field'].unique().tolist()}")
     print(
         f"Output file size: {os.path.getsize(output_path) / 1024 / 1024:.2f} MB")
 

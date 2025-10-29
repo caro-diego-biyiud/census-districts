@@ -1,11 +1,25 @@
 import geopandas as gpd
+import pandas as pd
 import os
 from pathlib import Path
 
 
-def area_with_municipalities(area_name, area):
+def area_with_municipalities(csv_path):
     print("=== Spanish Area Processing ===")
-    print(f"Getting {area_name} municipalities...\n")
+
+    # Read CSV and extract area name
+    csv_path = Path(csv_path)
+    area_name = csv_path.stem
+    print(f"Getting {area_name}...\n")
+
+    # Read area definition from CSV
+    try:
+        area_df = pd.read_csv(csv_path, delimiter=';', encoding='utf-8')
+        print(f"   ✓ Loaded area definition with {len(area_df)} entries")
+        print(f"   ✓ Fields: {area_df['field'].unique().tolist()}")
+    except Exception as e:
+        print(f"ERROR reading CSV file: {e}")
+        return
 
     script_dir = Path(__file__).parent
     data_path = script_dir / f"../../output/{area_name}/{area_name}_with_districts.geojson"
@@ -36,15 +50,22 @@ def area_with_municipalities(area_name, area):
 
 
     filtered_gdf = gdf
-    # Check for missing municipalities
-    found_municipalities = set(filtered_gdf["NMUN"].unique())
-    missing_municipalities = set(area) - found_municipalities
-    if missing_municipalities:
-        print(f"\n❌ Missing municipalities not found in data:")
-        for missing in sorted(missing_municipalities):
-            print(f"   ❌ {missing}")
-    else:
-        print(f"\n✓ All {len(area)} municipalities found in data")
+
+    # Check for missing values by field (only for fields that exist in data)
+    print("\n3. Validating CSV criteria against data")
+    for field, group in area_df.groupby('field'):
+        if field in gdf.columns:
+            values = set(group['value'].tolist())
+            found_values = set(gdf[field].unique())
+            missing_values = values - found_values
+            if missing_values:
+                print(f"   ❌ Missing {field} values not found in data:")
+                for missing in sorted(missing_values):
+                    print(f"      ❌ {missing}")
+            else:
+                print(f"   ✓ All {len(values)} {field} values found in data")
+        else:
+            print(f"   ⚠️  Field '{field}' not found in data columns: {list(gdf.columns)}")
 
     print("\n4. Grouping by municipality")
     try:
@@ -52,7 +73,7 @@ def area_with_municipalities(area_name, area):
         temp_gdf = filtered_gdf.dissolve(by=['CMUN'], as_index=False)
         
         print(
-            f"   ✓ Created {len(temp_gdf)} districts from {len(filtered_gdf)} sections")
+            f"   ✓ Created {len(temp_gdf)} municipalities from {len(filtered_gdf)} districts")
         filtered_gdf = temp_gdf
     except Exception as e:
         print(f"ERROR during dissolve: {e}")
@@ -91,11 +112,12 @@ def area_with_municipalities(area_name, area):
         return
 
     print("\n=== Processing Summary ===")
-    print(f"Input sections: {len(gdf)}")
-    print(f"Output districts: {len(filtered_gdf)}")
-    print(f"Municipalities: {len(area)}")
+    print(f"Input districts: {len(gdf)}")
+    print(f"Output municipalities: {len(filtered_gdf)}")
+    print(f"CSV entries: {len(area_df)}")
+    print(f"CSV fields: {area_df['field'].unique().tolist()}")
     print(
         f"Output file size: {os.path.getsize(output_path) / 1024 / 1024:.2f} MB")
 
     print("\n✓ Processing completed successfully!")
-    print(f"Districts GeoJSON saved to: {output_path}")
+    print(f"Municipalities GeoJSON saved to: {output_path}")
