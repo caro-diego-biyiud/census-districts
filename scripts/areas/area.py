@@ -5,43 +5,6 @@ from pathlib import Path
 
 
 def main():
-    # barcelona_metropololitan_area = ["Badalona",
-    #                                  "Badia del Vallès",
-    #                                  "Barberà del Vallès",
-    #                                  "Barcelona",
-    #                                  "Begues",
-    #                                  "Castellbisbal",
-    #                                  "Castelldefels",
-    #                                  "Cerdanyola del Vallès",
-    #                                  "Cervelló",
-    #                                  "Corbera de Llobregat",
-    #                                  "Cornellà de Llobregat",
-    #                                  "Papiol, El",
-    #                                  "Prat de Llobregat, El",
-    #                                  "Esplugues de Llobregat",
-    #                                  "Gavà",
-    #                                  "Hospitalet de Llobregat, L'",
-    #                                  "Palma de Cervelló, La",
-    #                                  "Molins de Rei",
-    #                                  "Montcada i Reixac",
-    #                                  "Montgat",
-    #                                  "Pallejà",
-    #                                  "Ripollet",
-    #                                  "Sant Adrià de Besòs",
-    #                                  "Sant Andreu de la Barca",
-    #                                  "Sant Boi de Llobregat",
-    #                                  "Sant Climent de Llobregat",
-    #                                  "Sant Cugat del Vallès",
-    #                                  "Sant Feliu de Llobregat",
-    #                                  "Sant Joan Despí",
-    #                                  "Sant Just Desvern",
-    #                                  "Sant Vicenç dels Horts",
-    #                                  "Santa Coloma de Cervelló",
-    #                                  "Santa Coloma de Gramenet",
-    #                                  "Tiana",
-    #                                  "Torrelles de Llobregat",
-    #                                  "Viladecans"]
-
     # Set up paths
     script_dir = Path(__file__).parent
     data_areas_dir = script_dir / "../../data/areas"
