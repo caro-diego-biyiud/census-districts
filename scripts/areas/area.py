@@ -24,8 +24,32 @@ def main():
     #     area_with_districts(canary_csv)
     #     area_with_municipalities(canary_csv)
     #     total_area(canary_csv)
-
+    
+    # navarra_csv = data_areas_dir / "Red_Navarra_de_Entidades_Locales_hacia_la_Sostenibilidad.csv"
+    # if navarra_csv.exists():
+    #     print("Processing Navarra...")
+    #     area_with_districts(navarra_csv)
+    #     area_with_municipalities(navarra_csv)
+    #     total_area(navarra_csv)
+        
+    # red_innpulso_csv = data_areas_dir / "Red_Innpulso.csv"
+    # if red_innpulso_csv.exists():
+    #     print("Processing Red Innpulso...")
+    #     area_with_districts(red_innpulso_csv)
+    #     area_with_municipalities(red_innpulso_csv)
+    #     total_area(red_innpulso_csv)
+        
+    # reci_csv = data_areas_dir / "Red_Espanola_Municipios_Y_Provincias.csv"
+    # if reci_csv.exists():
+    #     print("Processing Red Espanola y Municipios...")
+    #     area_with_districts(reci_csv)
+    #     area_with_municipalities(reci_csv)
+    #     total_area(reci_csv)
+        
+        
+    
     # Process all CSV files in the areas directory
+    
     print("\nProcessing all available area CSV files...")
     for csv_file in data_areas_dir.glob("*.csv"):
         print(f"\n{'='*50}")
