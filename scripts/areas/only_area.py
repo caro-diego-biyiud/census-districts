@@ -24,7 +24,7 @@ def total_area(csv_path):
     script_dir = Path(__file__).parent
     data_path = script_dir / f"../../output/{area_name}/{area_name}_with_municipalities.geojson"
     output_path = script_dir / \
-        f"../../output/{area_name}/{area_name}_only_area.geojson"
+        f"../../output/areas/{area_name}/{area_name}_only_area.geojson"
 
     print(f"Input file: {data_path}")
     print(f"Output file: {output_path}")
@@ -70,8 +70,12 @@ def total_area(csv_path):
     print("\n4. Grouping by area")
     try:
         temp_gdf = filtered_gdf
-        temp_gdf = filtered_gdf.dissolve(by=['CCA'], as_index=False)
-        
+        # temp_gdf = filtered_gdf.dissolve(by=['CCA'], as_index=False)
+        temp_gdf = filtered_gdf.dissolve()
+
+        # Add area name field to the dissolved geometry
+        temp_gdf['area_name'] = area_name
+
         print(
             f"   ✓ Created {len(temp_gdf)} area from {len(filtered_gdf)} municipalities")
         filtered_gdf = temp_gdf
@@ -83,9 +87,8 @@ def total_area(csv_path):
 
     print("\n5. Selecting fields to keep...")
     fields_to_keep = [
-        "CPRO", "NPRO",  # Province level
-        "CCA", "NCA",  # Community level
-        "geometry"
+        "geometry",
+        "area_name"
     ]
 
     # Keep only fields that exist in the data

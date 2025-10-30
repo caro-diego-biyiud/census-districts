@@ -24,7 +24,7 @@ def area_with_municipalities(csv_path):
     script_dir = Path(__file__).parent
     data_path = script_dir / f"../../output/{area_name}/{area_name}_with_districts.geojson"
     output_path = script_dir / \
-        f"../../output/{area_name}/{area_name}_with_municipalities.geojson"
+        f"../../output/areas/{area_name}/{area_name}_with_municipalities.geojson"
 
     print(f"Input file: {data_path}")
     print(f"Output file: {output_path}")
@@ -70,7 +70,7 @@ def area_with_municipalities(csv_path):
     print("\n4. Grouping by municipality")
     try:
         temp_gdf = filtered_gdf
-        temp_gdf = filtered_gdf.dissolve(by=['CMUN'], as_index=False)
+        temp_gdf = filtered_gdf.dissolve(by=['CUMUN'], as_index=False)
         
         print(
             f"   ✓ Created {len(temp_gdf)} municipalities from {len(filtered_gdf)} districts")

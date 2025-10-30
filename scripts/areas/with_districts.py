@@ -24,7 +24,7 @@ def area_with_districts(csv_path):
     script_dir = Path(__file__).parent
     data_path = script_dir / "../../data/processed/distritos_2025.geojson"
     output_path = script_dir / \
-        f"../../output/{area_name}/{area_name}_with_districts.geojson"
+        f"../../output/areas/{area_name}/{area_name}_with_districts.geojson"
 
     print(f"Input file: {data_path}")
     print(f"Output file: {output_path}")
