@@ -22,7 +22,7 @@ def area_with_municipalities(csv_path):
         return
 
     script_dir = Path(__file__).parent
-    data_path = script_dir / f"../../output/{area_name}/{area_name}_with_districts.geojson"
+    data_path = script_dir / f"../../output/areas/{area_name}/{area_name}_with_districts.geojson"
     output_path = script_dir / \
         f"../../output/areas/{area_name}/{area_name}_with_municipalities.geojson"
 

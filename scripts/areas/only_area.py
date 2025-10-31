@@ -22,7 +22,7 @@ def total_area(csv_path):
         return
 
     script_dir = Path(__file__).parent
-    data_path = script_dir / f"../../output/{area_name}/{area_name}_with_municipalities.geojson"
+    data_path = script_dir / f"../../output/areas/{area_name}/{area_name}_with_municipalities.geojson"
     output_path = script_dir / \
         f"../../output/areas/{area_name}/{area_name}_only_area.geojson"
 
